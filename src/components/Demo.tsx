@@ -52,6 +52,10 @@ export default function Demo(
     setNotificationDetails(context?.client.notificationDetails ?? null);
   }, [context]);
 
+  useEffect(() => {
+    addFrame
+    }, [context]);
+
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
 
