@@ -10,17 +10,17 @@ This is a [NextJS](https://nextjs.org/) + TypeScript + React app.
 
 
 ### Clone this repository:
-    ```bash
+```bash
     git clone https://github.com/farcasterxyz/frames-v2-demo.git
-    ```
+ ```
 
 ### Install dependencies:
 Add `react` and `react-dom` to the project:
-    ```bash
+```bash
     yarn add react react-dom
-    ```
-
+```
 ### Configure environment variables:
+
 1. Rename `example.env` to `.env`.
 2. Add the following environment variables to the .env file:
 ```bash
@@ -35,6 +35,7 @@ replace `<generated-secure-secret>` with the generated string.
 ```
 
 ### Start the Development Server
+Run the development server:
 ```bash
 yarn dev
 ```
@@ -82,11 +83,11 @@ NEXT_PUBLIC_URL: https://<your-vercel-domain>
 ```
 3. Save the changes.
 
-## Integrate with Frame Playground
+## Integrate your Farcaster account with Frame 
 1. Open the Domains section in Frame Playground.
 2. Paste the Vercel domain (e.g., frame-demo-three.vercel.app).
-3. Generate the domain manifest (this will be copied to your clipboard).
-4. Untick Include Example Definition.
+3. Untick Include Example Definition.
+4. Generate the domain manifest (this will be copied to your clipboard).
 ### Update Farcaster Route
 1. Open the file:
 ```bash
