@@ -53,9 +53,8 @@ export default function Demo(
   }, [context]);
 
   useEffect(() => {
-    addFrame();
-}, [context]);
-
+    addFrame
+    }, [context]);
 
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
