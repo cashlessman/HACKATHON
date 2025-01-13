@@ -53,7 +53,7 @@ export default function Demo(
   }, [context]);
 
   useEffect(() => {
-    addFrame
+    addFrame()
     }, [context]);
 
   const { address, isConnected } = useAccount();
