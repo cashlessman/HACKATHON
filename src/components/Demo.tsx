@@ -5,9 +5,9 @@ import { Input } from "../components/ui/input"
 import { signIn, signOut, getCsrfToken } from "next-auth/react";
 import sdk, {
     AddFrame,
+  Context,
   FrameNotificationDetails,
   SignIn as SignInCore,
-  type Context,
 } from "@farcaster/frame-sdk";
 import {
   useAccount,
@@ -48,13 +48,16 @@ export default function Demo(
   const [addFrameResult, setAddFrameResult] = useState("");
   const [sendNotificationResult, setSendNotificationResult] = useState("");
 
+  const cards = [Frame1(), Frame({context}), SignedIn(), OpenLink(),ViewProfile(), CloseFrame(), <AddFrameClient/>, Notification(),<Wallet/>];
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   useEffect(() => {
     setNotificationDetails(context?.client.notificationDetails ?? null);
   }, [context]);
 
-  useEffect(() => {
-    addFrame()
-    }, [context]);
+  // useEffect(() => {
+  //   addFrame()
+  //   }, [context]);
 
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
@@ -155,13 +158,6 @@ store.subscribe(providerDetails => {
     }
   }, [isSDKLoaded]);
 
-  const openUrl = useCallback(() => {
-    sdk.actions.openUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-  }, []);
-
-  const openWarpcastUrl = useCallback(() => {
-    sdk.actions.openUrl("https://warpcast.com/~/compose");
-  }, []);
 
   const close = useCallback(() => {
     sdk.actions.close();
@@ -266,223 +262,554 @@ store.subscribe(providerDetails => {
     return <div>Loading...</div>;
   }
 
-  return (
-    <div style={{ 
-      paddingTop: context?.client.safeAreaInsets?.top ?? 0, 
-      paddingBottom: context?.client.safeAreaInsets?.bottom ?? 0,
-      paddingLeft: context?.client.safeAreaInsets?.left ?? 0,
-      paddingRight: context?.client.safeAreaInsets?.right ?? 0 ,
-    }}>
-      <div className="w-[300px] mx-auto py-2 px-2">
-        <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % cards.length);
+  };
 
-        <div className="mb-4">
-          <h2 className="font-2xl font-bold">Context</h2>
-          <button
-            onClick={toggleContext}
-            className="flex items-center gap-2 transition-colors"
-          >
-            <span
-              className={`transform transition-transform ${
-                isContextOpen ? "rotate-90" : ""
-              }`}
-            >
-              ➤
-            </span>
-            Tap to expand
-          </button>
+  const handlePrevious = () => {
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + cards.length) % cards.length);
+  };
+  
+  function Wallet() {
+    return (
+      <div>
+      <h1 className="text-center text-2xl font-semibold">Wallet</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">You can connect your wallet and make on-chain transactions within the frame.</h1>
 
-          {isContextOpen && (
-            <div className="p-4 mt-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-                {JSON.stringify(context, null, 2)}
-              </pre>
-            </div>
-          )}
+      {address && (
+        <div className="my-2 text-xs">
+         Your Address: <pre className="inline">{truncateAddress(address)}</pre>
         </div>
+      )}
 
-        <div>
-          <h2 className="font-2xl font-bold">Actions</h2>
-
-          <div className="mb-4">
-            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-                sdk.actions.signIn
-              </pre>
-            </div>
-            <SignIn />
-          </div>
-
-          <div className="mb-4">
-            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-                sdk.actions.openUrl
-              </pre>
-            </div>
-            <Button onClick={openUrl}>Open Link</Button>
-          </div>
-
-          <div className="mb-4">
-            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-                sdk.actions.openUrl
-              </pre>
-            </div>
-            <Button onClick={openWarpcastUrl}>Open Warpcast Link</Button>
-          </div>
-
-          <div className="mb-4">
-            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-                sdk.actions.viewProfile
-              </pre>
-            </div>
-            <ViewProfile />
-          </div>
-
-          <div className="mb-4">
-            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-                sdk.actions.close
-              </pre>
-            </div>
-            <Button onClick={close}>Close Frame</Button>
-          </div>
+      {chainId && (
+        <div className="my-2 text-xs">
+          Chain ID: <pre className="inline">{chainId}</pre>
         </div>
+      )}
 
-        <div className="mb-4">
-          <h2 className="font-2xl font-bold">Last event</h2>
+      <div className="mb-4">
+        <Button
+          onClick={() =>
+            isConnected
+              ? disconnect()
+              : connect({ connector: config.connectors[0] })
+          }
+        >
+          {isConnected ? "Disconnect" : "Connect"}
+        </Button>
+      </div>
 
-          <div className="p-4 mt-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-              {lastEvent || "none"}
-            </pre>
-          </div>
-        </div>
+      <div className="mb-4">
+        <SignMessage />
+      </div>
 
-        <div>
-          <h2 className="font-2xl font-bold">Add to client & notifications</h2>
-
-          <div className="mt-2 mb-4 text-sm">
-            Client fid {context?.client.clientFid},
-            {added ? " frame added to client," : " frame not added to client,"}
-            {notificationDetails
-              ? " notifications enabled"
-              : " notifications disabled"}
-          </div>
-
+      {isConnected && (
+        <>
           <div className="mb-4">
-            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-                sdk.actions.addFrame
-              </pre>
-            </div>
-            {addFrameResult && (
-              <div className="mb-2 text-sm">
-                Add frame result: {addFrameResult}
-              </div>
-            )}
-            <Button onClick={addFrame} disabled={added}>
-              Add frame to client
-            </Button>
+            <SendEth />
           </div>
-
-          {sendNotificationResult && (
-            <div className="mb-2 text-sm">
-              Send notification result: {sendNotificationResult}
-            </div>
-          )}
-          <div className="mb-4">
-            <Button onClick={sendNotification} disabled={!notificationDetails}>
-              Send notification
-            </Button>
-          </div>
-        </div>
-
-        <div>
-          <h2 className="font-2xl font-bold">Wallet</h2>
-
-          {address && (
-            <div className="my-2 text-xs">
-              Address: <pre className="inline">{truncateAddress(address)}</pre>
-            </div>
-          )}
-
-          {chainId && (
-            <div className="my-2 text-xs">
-              Chain ID: <pre className="inline">{chainId}</pre>
-            </div>
-          )}
-
           <div className="mb-4">
             <Button
-              onClick={() =>
-                isConnected
-                  ? disconnect()
-                  : connect({ connector: config.connectors[0] })
-              }
+              onClick={sendTx}
+              disabled={!isConnected || isSendTxPending}
+              isLoading={isSendTxPending}
             >
-              {isConnected ? "Disconnect" : "Connect"}
+              Send Transaction (contract)
             </Button>
+            {isSendTxError && renderError(sendTxError)}
+            {txHash && (
+              <div className="mt-2 text-xs">
+                <div>Hash: {truncateAddress(txHash)}</div>
+                <div>
+                  Status:{" "}
+                  {isConfirming
+                    ? "Confirming..."
+                    : isConfirmed
+                    ? "Confirmed!"
+                    : "Pending"}
+                </div>
+              </div>
+            )}
           </div>
-
           <div className="mb-4">
-            <SignMessage />
+            <Button
+              onClick={signTyped}
+              disabled={!isConnected || isSignTypedPending}
+              isLoading={isSignTypedPending}
+            >
+              Sign Typed Data
+            </Button>
+            {isSignTypedError && renderError(signTypedError)}
           </div>
+          <div className="mb-4">
+            <Button
+              onClick={handleSwitchChain}
+              disabled={isSwitchChainPending}
+              isLoading={isSwitchChainPending}
+            >
+              Switch to {chainId === base.id ? "Optimism" : "Base"}
+            </Button>
+            {isSwitchChainError && renderError(switchChainError)}
+          </div>
+        </>
+      )}
+    </div>
+    );
+  }
+  function AddFrameClient() {
+    return (
+  
+  
+      <div>
+        <h1 className="text-center text-2xl font-semibold">Add Frame</h1>
+        <h1 className="text-center mb-2 text-xs font-medium">With addFrame, you can prompt users to add your frame to the Frames tab.</h1>   
+  
+      <div className="mb-4">
+        <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+          <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+            sdk.actions.addFrame
+          </pre>
+        </div>
+        {addFrameResult && (
+          <div className="mb-2 text-sm">
+            Add frame result: {addFrameResult}
+          </div>
+        )}
+        <Button onClick={addFrame} disabled={added}>
+          Add frame to client
+        </Button>
+      </div>
 
-          {isConnected && (
-            <>
-              <div className="mb-4">
-                <SendEth />
-              </div>
-              <div className="mb-4">
-                <Button
-                  onClick={sendTx}
-                  disabled={!isConnected || isSendTxPending}
-                  isLoading={isSendTxPending}
-                >
-                  Send Transaction (contract)
-                </Button>
-                {isSendTxError && renderError(sendTxError)}
-                {txHash && (
-                  <div className="mt-2 text-xs">
-                    <div>Hash: {truncateAddress(txHash)}</div>
-                    <div>
-                      Status:{" "}
-                      {isConfirming
-                        ? "Confirming..."
-                        : isConfirmed
-                        ? "Confirmed!"
-                        : "Pending"}
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="mb-4">
-                <Button
-                  onClick={signTyped}
-                  disabled={!isConnected || isSignTypedPending}
-                  isLoading={isSignTypedPending}
-                >
-                  Sign Typed Data
-                </Button>
-                {isSignTypedError && renderError(signTypedError)}
-              </div>
-              <div className="mb-4">
-                <Button
-                  onClick={handleSwitchChain}
-                  disabled={isSwitchChainPending}
-                  isLoading={isSwitchChainPending}
-                >
-                  Switch to {chainId === base.id ? "Optimism" : "Base"}
-                </Button>
-                {isSwitchChainError && renderError(switchChainError)}
-              </div>
-            </>
+      <div className="text-center font-semibold">
+  Frame added: 
+  <span className="ml-1">{added ? "YES" : "NO"}</span>
+</div>
+
+    </div>
+    );
+  }
+
+  const reply =  encodeURIComponent(
+    `Hey! Can you add me to the dev chat, please?`
+    );
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+  function Scroll() {
+    return (
+      <div className="w-auto bg-slate-900">
+      {/* Header */}
+      {/* <header className="sticky top-0 bg-white shadow-lg"> */}
+      <header className="bg-white shadow-lg">
+  
+        <div className="container items-center p-3">
+          <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center">Farcaster Frames v2</h1>
+        </div>
+      </header>
+  
+      {/* Hero Section */}
+      <section className="flex flex-col justify-center items-center text-center py-20 h-[calc(100vh-80px)]">
+      <h2 className="text-4xl sm:text-5xl font-black text-white drop-shadow-xl animate-pulse px-4">
+      Create Your First V2 Frame Today!
+    </h2>
+  
+    <div className="flex flex-col mt-10">
+    <button
+          className="bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+          onClick={() => scrollToSection('card')}
+          >
+  Let&apos;s Get Started 🚀
+  </button>
+
+  <button
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+          onClick={() => scrollToSection('docs')}
+        >
+  Docs
+  </button>
+  <button
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+          onClick={() => sdk.actions.openUrl( `https://github.com/cashlessman/HACKATHON`)}        >
+  GitHub &#x2197;
+  </button>
+  <button
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+          onClick={() => scrollToSection('github')}
+          >
+  Open Source Repositories
+  </button>
+
+    </div>
+  </section>
+  <section id="card">
+  <div className="flex flex-col items-center justify-center h-screen bg-slate-900">
+      <div className="w-80 p-6 bg-blue-100 rounded-lg shadow-lg">
+        {cards[currentIndex]}
+      </div>
+
+      <div className="mt-6 flex space-x-4">
+        {/* Hide "Previous" button when index is 0 */}
+        {currentIndex > 0 && (
+          <button
+            onClick={handlePrevious}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Previous
+          </button>
+        )}
+
+        {/* Display "Explore" when index is 0 */}
+        {currentIndex === 0 ? (
+          <button
+          onClick={handleNext}
+
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Explore
+          </button>
+        ) : currentIndex === cards.length - 1 ? (
+          <button
+          onClick={() => scrollToSection('docs')}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Docs
+          </button>
+        ) : (
+          <button
+            onClick={handleNext}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Next
+          </button>
+        )}
+      </div>
+    </div>  </section>
+  
+      {/* Features Section */}
+      <section id="docs" className="container mx-auto grid md:grid-cols-3 gap-3 p-5 text-center h-screen">
+      {[
+        {
+          title: "Introduction",
+          url: "https://docs.farcaster.xyz/developers/frames/v2/",
+          description: "Frames v2 is a full-screen interactive canvas based on HTML, CSS, and JavaScript."
+        },
+        {
+          title: "Getting Started",
+          url: "https://docs.farcaster.xyz/developers/frames/v2/getting-started",
+          description: "Build your first frame by setting up a Next.js app and integrating the Farcaster Frame SDK."
+        },
+        {
+          title: "Specification",
+          url: "https://docs.farcaster.xyz/developers/frames/v2/spec",
+          description: "Discover Frame URL specifications, client SDK API, and features like authentication and notifications."
+        },
+        {
+          title: "Resources",
+          url: "https://docs.farcaster.xyz/developers/frames/v2/resources",
+          description: "Explore example projects, videos, tools, and learning resources."
+        },
+        {
+          title: "Developer Tools",
+          url: "https://warpcast.com/~/developers/frames",
+          description: "Test and validate your frames in a live environment with the Developer Playground."
+        }
+      ].map((feature, index) => (
+        <div
+          key={index}
+          className="bg-blue-100 shadow-lg rounded-lg p-3 hover:scale-105 transition-transform flex items-center justify-center flex-col"      >
+          <h3
+            className="text-2xl font-bold text-purple-700 group-hover:underline cursor-pointer"
+            onClick={() => sdk.actions.openUrl(feature.url)}
+          >
+            {feature.title} &#x2197;
+          </h3>
+          <p className="text-gray-600 mt-3">{feature.description}</p>
+        </div>
+      ))}
+  </section>
+  <section id="github" className="flex flex-col w-full bg-slate-900 flex items-center justify-center text-white h-[calc(100vh-80px)]">
+    <div className="mb-4">
+    <h1 className="text-center mb-5 font-bold text-2xl">Open Source Repositories</h1>
+
+      <div className="grid grid-cols-2 gap-3">
+    <button
+      className="flex-1 bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+      onClick={() => sdk.actions.openUrl('https://github.com/warpcast/scores-frame')}
+    >
+      Warpcast Rewards
+    </button>
+    <button
+      className="flex-1 bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+      onClick={() => sdk.actions.openUrl('https://github.com/horsefacts/yoink-devcon')}
+    >
+      Yoink
+    </button>
+    <button
+      className="flex-1 bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+      onClick={() => sdk.actions.openUrl('https://github.com/horsefacts/frames-v2-swap-demo')}
+    >
+      Swap Demo
+    </button>
+    <button
+      className="flex-1 bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+      onClick={() => sdk.actions.openUrl('https://github.com/horsefacts/interface')}
+    >
+      Uniframe
+    </button>
+</div>
+    </div>
+    <div className="text-white py-3" style={{ backgroundColor: '#8a63d2' }}>
+    <div className="container mx-auto text-center">
+      <h2 className="text-3xl font-bold">Join Devs Group Chat</h2>
+      <div className="p-3 rounded-lg">
+        <img src="https://raw.githubusercontent.com/cashlessman/images/refs/heads/main/dwr-cast.png" alt="dwr's cast" className="rounded-lg" />
+      </div>
+      <button className="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-pink-400 hover:text-white transition-colors" onClick={() => sdk.actions.openUrl(`https://warpcast.com/~/compose?text=${reply}&parentCastHash=0x72baa04f953dbdd70dcadd773c6533209d5e574d`)}>
+        Reply
+      </button>
+      <button className="ml-2 bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-pink-400 hover:text-white transition-colors" onClick={() => sdk.actions.openUrl( `https://warpcast.com/~/inbox/create/3?text=Hey! Can you add me to the dev chat, please?`)}>
+        Send DC
+      </button>
+    </div>
+  </div>
+  </section>
+  
+      {/* Call to Action */}
+
+  
+  
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white py-5">
+      <div className="container mx-auto text-center">
+    <p>
+      Made with <span className="text-red-500">&hearts;</span> by <span className="text-blue-500" onClick={() =>sdk.actions.viewProfile({ fid: 268438 })}>cashlessman.eth</span>.
+    </p>
+  </div>
+  
+      </footer>
+    </div>
+  
+  
+    );
+  }
+  if (!context?.user.fid)
+return (
+  <div className="w-auto bg-slate-900">
+    {/* Header */}
+    <header className="bg-white shadow-lg">
+      <div className="container items-center p-3">
+        <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center">Farcaster Frames v2</h1>
+      </div>
+    </header>
+
+    {/* Hero Section */}
+    <section className="flex flex-col justify-center items-center text-center py-20 h-[calc(100vh-80px)]">
+      <h2 className="text-4xl sm:text-5xl font-black text-white drop-shadow-xl animate-pulse px-4">
+        Create Your First V2 Frame Today!
+      </h2>
+
+      <div className="flex flex-col mt-10">
+        <button
+          className="bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+          onClick={() => scrollToSection('card')}
+        >
+          Let&apos;s Get Started 🚀
+        </button>
+
+        <button
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+          onClick={() => scrollToSection('docs')}
+        >
+          Docs
+        </button>
+        <a
+          href="https://github.com/cashlessman/HACKATHON"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+        >
+          GitHub &#x2197;
+        </a>
+        <button
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+          onClick={() => scrollToSection('github')}
+        >
+          Open Source Repositories
+        </button>
+      </div>
+    </section>
+
+    <section id="card">
+      <div className="flex flex-col items-center justify-center h-screen bg-slate-900">
+        <div className="w-80 p-6 bg-blue-100 rounded-lg shadow-lg">
+          {cards[currentIndex]}
+        </div>
+
+        <div className="mt-6 flex space-x-4">
+          {/* Hide "Previous" button when index is 0 */}
+          {currentIndex > 0 && (
+            <button
+              onClick={handlePrevious}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Previous
+            </button>
+          )}
+
+          {/* Display "Explore" when index is 0 */}
+          {currentIndex === 0 ? (
+            <button
+              onClick={handleNext}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Explore
+            </button>
+          ) : currentIndex === cards.length - 1 ? (
+            <button
+              onClick={() => scrollToSection('docs')}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Docs
+            </button>
+          ) : (
+            <button
+              onClick={handleNext}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Next
+            </button>
           )}
         </div>
       </div>
+    </section>
+
+    {/* Features Section */}
+    <section id="docs" className="container m-auto flex flex-wrap justify-center gap-5 p-5 text-center h-screen">
+      {[
+        {
+          title: "Introduction",
+          url: "https://docs.farcaster.xyz/developers/frames/v2/",
+          description: "Frames v2 is a full-screen interactive canvas based on HTML, CSS, and JavaScript."
+        },
+        {
+          title: "Getting Started",
+          url: "https://docs.farcaster.xyz/developers/frames/v2/getting-started",
+          description: "Build your first frame by setting up a Next.js app and integrating the Farcaster Frame SDK."
+        },
+        {
+          title: "Specification",
+          url: "https://docs.farcaster.xyz/developers/frames/v2/spec",
+          description: "Discover Frame URL specifications, client SDK API, and features like authentication and notifications."
+        },
+        {
+          title: "Resources",
+          url: "https://docs.farcaster.xyz/developers/frames/v2/resources",
+          description: "Explore example projects, videos, tools, and learning resources."
+        },
+        {
+          title: "Developer Tools",
+          url: "https://warpcast.com/~/developers/frames",
+          description: "Test and validate your frames in a live environment with the Developer Playground."
+        }
+      ].map((feature, index) => (
+        <div
+          key={index}
+          className="bg-blue-100 shadow-lg rounded-lg p-3 hover:scale-105 transition-transform flex items-center justify-center flex-col"
+        >
+          <a
+            href={feature.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-2xl font-bold text-purple-700 group-hover:underline cursor-pointer"
+          >
+            {feature.title} &#x2197;
+          </a>
+          <p className="text-gray-600 mt-3">{feature.description}</p>
+        </div>
+      ))}
+    </section>
+
+    <section id="github" className="flex flex-col w-full bg-slate-900 flex items-center justify-center text-white h-[calc(100vh-80px)]">
+      <div className="mb-4">
+        <h1 className="text-center mb-5 font-bold text-2xl">Open Source Repositories</h1>
+
+        <div className="grid grid-cols-2 gap-3">
+          <a
+            href="https://github.com/warpcast/scores-frame"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+          >
+            Warpcast Rewards
+          </a>
+          <a
+            href="https://github.com/horsefacts/yoink-devcon"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+          >
+            Yoink
+          </a>
+          <a
+            href="https://github.com/horsefacts/frames-v2-swap-demo"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+          >
+            Swap Demo
+          </a>
+          <a
+            href="https://github.com/horsefacts/interface"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+          >
+            Uniframe
+          </a>
+        </div>
+      </div>
+      <div className="text-white py-3" style={{ backgroundColor: '#8a63d2' }}>
+        <div className="container mx-auto text-center">
+          <h2 className="text-3xl font-bold">Join Devs Group Chat</h2>
+          <div className="p-3 rounded-lg">
+            <img src="https://raw.githubusercontent.com/cashlessman/images/refs/heads/main/dwr-cast.png" alt="dwr's cast" className="rounded-lg" />
+          </div>
+          <a
+            href={`https://warpcast.com/~/compose?text=${reply}&parentCastHash=0x72baa04f953dbdd70dcadd773c6533209d5e574d`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-pink-400 hover:text-white transition-colors"
+          >
+            Reply
+          </a>
+          <a
+            href="https://warpcast.com/~/inbox/create/3?text=Hey! Can you add me to the dev chat, please?"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-2 bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-pink-400 hover:text-white transition-colors"
+          >
+            Send DC
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {/* Footer */}
+    <footer className="bg-gray-800 text-white py-5">
+      <div className="container mx-auto text-center">
+        <p>
+          Made with <span className="text-red-500">&hearts;</span> by <span className="text-blue-500" onClick={() => sdk.actions.viewProfile({ fid: 268438 })}>cashlessman.eth</span>.
+        </p>
+      </div>
+    </footer>
+  </div>
+);
+
+  return (
+
+    <div><Scroll/>
+   
     </div>
+
   );
 }
 
@@ -638,7 +965,7 @@ function SignIn() {
           onClick={handleSignIn}
           disabled={signingIn}
         >
-          Sign In with Farcaster
+          Sign In
         </Button>
       }
       {status === "authenticated" &&
@@ -672,12 +999,19 @@ function SignIn() {
 }
 
 function ViewProfile() {
-  const [fid, setFid] = useState('3');
+  const [fid, setFid] = useState('268438');
 
   return (
     <>
       <div>
-        <Label className="text-xs font-semibold text-gray-500 mb-1" htmlFor="view-profile-fid">Fid</Label>
+      <h1 className="text-center text-2xl font-semibold">viewProfile</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With `viewProfile`, you can view a user's Farcaster profile within the frame.</h1>
+      <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.actions.viewProfile
+              </pre>
+            </div>
+        <Label className="text-xs font-semibold text-gray-500 mb-1" htmlFor="view-profile-fid">Fid:</Label>
         <Input
           id="view-profile-fid"
           type="number"
@@ -698,6 +1032,104 @@ function ViewProfile() {
     </>
   );
 }
+function Frame({ context }: { context: Context.FrameContext | undefined }) {
+  return (
+    <div>
+      <h1 className="text-center text-2xl font-semibold"> Context</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">with Context you will have access to the following</h1>
+
+    <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+      <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+        {JSON.stringify(context, null, 2)}
+      </pre>
+    </div>
+    </div>
+  );
+}
+
+function SignedIn() {
+  return (
+    <div>
+      <h1 className="text-center text-2xl font-semibold">Sign In with Farcaster</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With "Sign In with Farcaster," you can link your frame to the user's Farcaster account.</h1>
+    <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+      <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+        sdk.actions.signIn
+      </pre>
+    </div>
+    <SignIn />
+  </div>
+  );
+}
+function OpenLink() {
+  return (
+    <div >
+      <h1 className="text-center text-2xl font-semibold">openUrl</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With openUrl, you can open a link outside of the frame.</h1>
+    <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+      <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+        sdk.actions.openUrl
+      </pre>
+    </div>
+    <Button onClick={()=> sdk.actions.openUrl("https://warpcast.com/cashlessman.eth")}>Open Warpcast Profile</Button>
+  </div>
+  );
+}
+function Frame1() {
+  return (
+    <div >
+      <h1 className="text-center text-2xl font-semibold">What distinguishes Frames v2 from a webpage?</h1>
+ 
+  </div>
+  );
+}
+
+function CloseFrame() {
+  return (
+    <div>
+      <h1 className="text-center text-2xl font-semibold">close</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With close, you can exit the frame.</h1>
+    <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+      <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+        sdk.actions.close
+      </pre>
+    </div>
+    <Button onClick={close}>Close Frame</Button>
+  </div>
+  );
+}
+
+function Notification() {
+  return (
+    <div className="container mx-auto text-center">
+      <h1 className="text-center text-2xl font-semibold">Notificationn</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">You can also send in app notifications from your frame</h1>
+      <div className="rounded-lg">
+        <img
+          src="https://raw.githubusercontent.com/cashlessman/images/refs/heads/main/reward-notification.png"
+          alt="dwr's cast"
+          className="rounded-lg mx-auto max-w-full"
+        />
+      </div>
+
+    </div>
+
+
+  );
+}
+const scrollToSection = (id:string) => {
+  const section = document.getElementById(id);
+  if (section) {
+    section.scrollIntoView({
+      behavior: 'smooth', // Enables smooth scrolling
+      block: 'start', // Aligns the section at the top
+    });
+  } else {
+    console.warn(`Element with ID "${id}" not found.`);
+  }
+};
+
+
 
 const renderError = (error: Error | null) => {
   if (!error) return null;

@@ -33,7 +33,18 @@ replace `<generated-secure-secret>` with the generated string.
 ```bash
  node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
+### Modify Frame Metadata
+open the following folder and replace splash.png and icon.png
 
+```bash
+.\frames-v2-demo\public
+```
+Modify Frame Image as required in
+```bash
+.\frames-v2-demo\src\app\opengraph-image.tsx
+```
+debug the Farme image on [localhost:3000](http://localhost:3000/opengraph-image)
+ 
 ### Start the Development Server
 Run the development server:
 ```bash
