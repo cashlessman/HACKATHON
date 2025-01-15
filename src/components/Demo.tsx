@@ -61,9 +61,9 @@ export default function Demo(
   ];
     const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    setNotificationDetails(context?.client.notificationDetails ?? null);
-  }, [context]);
+  // useEffect(() => {
+  //   setNotificationDetails(context?.client.notificationDetails ?? null);
+  // }, [context]);
 
   // useEffect(() => {
   //   addFrame()
@@ -105,68 +105,68 @@ export default function Demo(
     switchChain({ chainId: chainId === base.id ? optimism.id : base.id });
   }, [switchChain, chainId]);
 
-  useEffect(() => {
-    const load = async () => {
-      const context = await sdk.context;
-      setContext(context);
-      setAdded(context.client.added);
+  // useEffect(() => {
+  //   const load = async () => {
+  //     const context = await sdk.context;
+  //     setContext(context);
+  //     setAdded(context.client.added);
 
-      sdk.on("frameAdded", ({ notificationDetails }) => {
-        setLastEvent(
-          `frameAdded${!!notificationDetails ? ", notifications enabled" : ""}`
-        );
+  //     sdk.on("frameAdded", ({ notificationDetails }) => {
+  //       setLastEvent(
+  //         `frameAdded${!!notificationDetails ? ", notifications enabled" : ""}`
+  //       );
 
-        setAdded(true);
-        if (notificationDetails) {
-          setNotificationDetails(notificationDetails);
-        }
-      });
+  //       setAdded(true);
+  //       if (notificationDetails) {
+  //         setNotificationDetails(notificationDetails);
+  //       }
+  //     });
 
-      sdk.on("frameAddRejected", ({ reason }) => {
-        setLastEvent(`frameAddRejected, reason ${reason}`);
-      });
+  //     sdk.on("frameAddRejected", ({ reason }) => {
+  //       setLastEvent(`frameAddRejected, reason ${reason}`);
+  //     });
 
-      sdk.on("frameRemoved", () => {
-        setLastEvent("frameRemoved");
-        setAdded(false);
-        setNotificationDetails(null);
-      });
+  //     sdk.on("frameRemoved", () => {
+  //       setLastEvent("frameRemoved");
+  //       setAdded(false);
+//         setNotificationDetails(null);
+//       });
 
-      sdk.on("notificationsEnabled", ({ notificationDetails }) => {
-        setLastEvent("notificationsEnabled");
-        setNotificationDetails(notificationDetails);
-      });
-      sdk.on("notificationsDisabled", () => {
-        setLastEvent("notificationsDisabled");
-        setNotificationDetails(null);
-      });
+//       sdk.on("notificationsEnabled", ({ notificationDetails }) => {
+//         setLastEvent("notificationsEnabled");
+//         setNotificationDetails(notificationDetails);
+//       });
+//       sdk.on("notificationsDisabled", () => {
+//         setLastEvent("notificationsDisabled");
+//         setNotificationDetails(null);
+//       });
 
-      sdk.on("primaryButtonClicked", () => {
-        console.log("primaryButtonClicked");
-      });
+//       sdk.on("primaryButtonClicked", () => {
+//         console.log("primaryButtonClicked");
+//       });
 
-      console.log("Calling ready");
-      sdk.actions.ready({});
+//       console.log("Calling ready");
+//       sdk.actions.ready({});
 
-// Set up a MIPD Store, and request Providers.
-const store = createStore()
+// // Set up a MIPD Store, and request Providers.
+// const store = createStore()
 
-// Subscribe to the MIPD Store.
-store.subscribe(providerDetails => {
-  console.log("PROVIDER DETAILS", providerDetails)
-  // => [EIP6963ProviderDetail, EIP6963ProviderDetail, ...]
-})
+// // Subscribe to the MIPD Store.
+// store.subscribe(providerDetails => {
+//   console.log("PROVIDER DETAILS", providerDetails)
+//   // => [EIP6963ProviderDetail, EIP6963ProviderDetail, ...]
+// })
 
-    };
-    if (sdk && !isSDKLoaded) {
-      console.log("Calling load");
-      setIsSDKLoaded(true);
-      load();
-      return () => {
-        sdk.removeAllListeners();
-      };
-    }
-  }, [isSDKLoaded]);
+//     };
+//     if (sdk && !isSDKLoaded) {
+//       console.log("Calling load");
+//       setIsSDKLoaded(true);
+//       load();
+//       return () => {
+//         sdk.removeAllListeners();
+//       };
+//     }
+//   }, [isSDKLoaded]);
 
 
   const addFrame = useCallback(async () => {
@@ -406,7 +406,7 @@ store.subscribe(providerDetails => {
       {/* Header */}
       {/* <header className="sticky top-0 bg-white shadow-lg"> */}
       <header className="bg-white shadow-lg">
-      <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center hidden">{title} {lastEvent}{notificationDetails}</h1>
+      <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center hidden">{title} {lastEvent}</h1>
 
         <div className="container items-center p-3">
           <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center">Farcaster Frames v2</h1>
