@@ -169,10 +169,6 @@ store.subscribe(providerDetails => {
   }, [isSDKLoaded]);
 
 
-  const close = useCallback(() => {
-    sdk.actions.close();
-  }, []);
-
   const addFrame = useCallback(async () => {
     try {
       setNotificationDetails(null);
@@ -410,7 +406,7 @@ store.subscribe(providerDetails => {
       {/* Header */}
       {/* <header className="sticky top-0 bg-white shadow-lg"> */}
       <header className="bg-white shadow-lg">
-      <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center hidden">{title} {lastEvent}</h1>
+      <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center hidden">{title} {lastEvent}{notificationDetails}</h1>
 
         <div className="container items-center p-3">
           <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center">Farcaster Frames v2</h1>
@@ -1016,7 +1012,7 @@ function ViewProfile() {
     <>
       <div>
       <h1 className="text-center text-2xl font-semibold">viewProfile</h1>
-      <h1 className="text-center mb-2 text-xs font-medium">With `viewProfile`, you can view a user's Farcaster profile within the frame.</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With viewProfile, you can view a user's Farcaster profile within the frame.</h1>
       <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
               <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
                 sdk.actions.viewProfile
@@ -1062,7 +1058,7 @@ function SignedIn() {
   return (
     <div>
       <h1 className="text-center text-2xl font-semibold">Sign In with Farcaster</h1>
-      <h1 className="text-center mb-2 text-xs font-medium">With "Sign In with Farcaster," you can link your frame to the user's Farcaster account.</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With Sign In with Farcaster, you can link your frame to the user&ldquo;s Farcaster account.</h1>
     <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
       <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
         sdk.actions.signIn
