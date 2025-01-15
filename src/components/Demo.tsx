@@ -36,7 +36,7 @@ export default function Demo(
 ) {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [context, setContext] = useState<Context.FrameContext>();
-  const [isContextOpen, setIsContextOpen] = useState(false);
+  // const [isContextOpen, setIsContextOpen] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
 
   const [added, setAdded] = useState(false);
@@ -46,10 +46,20 @@ export default function Demo(
   const [lastEvent, setLastEvent] = useState("");
 
   const [addFrameResult, setAddFrameResult] = useState("");
-  const [sendNotificationResult, setSendNotificationResult] = useState("");
+  // const [sendNotificationResult, setSendNotificationResult] = useState("");
 
-  const cards = [Frame1(), Frame({context}), SignedIn(), OpenLink(),ViewProfile(), CloseFrame(), <AddFrameClient/>, Notification(),<Wallet/>];
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const cards = [
+    <Frame1 key="frame1" />,
+    <Frame key="frame" context={context} />,
+    <SignedIn key="signedIn" />,
+    <OpenLink key="openLink" />,
+    <ViewProfile key="viewProfile" />,
+    <CloseFrame key="closeFrame" />,
+    <AddFrameClient key="addFrameClient" />,
+    <Notification key="notification" />,
+    <Wallet key="wallet" />
+  ];
+    const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     setNotificationDetails(context?.client.notificationDetails ?? null);
@@ -190,37 +200,37 @@ store.subscribe(providerDetails => {
     }
   }, []);
 
-  const sendNotification = useCallback(async () => {
-    setSendNotificationResult("");
-    if (!notificationDetails || !context) {
-      return;
-    }
+  // const sendNotification = useCallback(async () => {
+  //   setSendNotificationResult("");
+  //   if (!notificationDetails || !context) {
+  //     return;
+  //   }
 
-    try {
-      const response = await fetch("/api/send-notification", {
-        method: "POST",
-        mode: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fid: context.user.fid,
-          notificationDetails,
-        }),
-      });
+  //   try {
+  //     const response = await fetch("/api/send-notification", {
+  //       method: "POST",
+  //       mode: "same-origin",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         fid: context.user.fid,
+  //         notificationDetails,
+  //       }),
+  //     });
 
-      if (response.status === 200) {
-        setSendNotificationResult("Success");
-        return;
-      } else if (response.status === 429) {
-        setSendNotificationResult("Rate limited");
-        return;
-      }
+  //     if (response.status === 200) {
+  //       setSendNotificationResult("Success");
+  //       return;
+  //     } else if (response.status === 429) {
+  //       setSendNotificationResult("Rate limited");
+  //       return;
+  //     }
 
-      const data = await response.text();
-      setSendNotificationResult(`Error: ${data}`);
-    } catch (error) {
-      setSendNotificationResult(`Error: ${error}`);
-    }
-  }, [context, notificationDetails]);
+  //     const data = await response.text();
+  //     setSendNotificationResult(`Error: ${data}`);
+  //   } catch (error) {
+  //     setSendNotificationResult(`Error: ${error}`);
+  //   }
+  // }, [context, notificationDetails]);
 
   const sendTx = useCallback(() => {
     sendTransaction(
@@ -254,9 +264,9 @@ store.subscribe(providerDetails => {
     });
   }, [chainId, signTypedData]);
 
-  const toggleContext = useCallback(() => {
-    setIsContextOpen((prev) => !prev);
-  }, []);
+  // const toggleContext = useCallback(() => {
+  //   setIsContextOpen((prev) => !prev);
+  // }, []);
 
   if (!isSDKLoaded) {
     return <div>Loading...</div>;
@@ -400,7 +410,8 @@ store.subscribe(providerDetails => {
       {/* Header */}
       {/* <header className="sticky top-0 bg-white shadow-lg"> */}
       <header className="bg-white shadow-lg">
-  
+      <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center hidden">{title} {lastEvent}</h1>
+
         <div className="container items-center p-3">
           <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center">Farcaster Frames v2</h1>
         </div>
