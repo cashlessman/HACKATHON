@@ -1012,7 +1012,7 @@ function ViewProfile() {
     <>
       <div>
       <h1 className="text-center text-2xl font-semibold">viewProfile</h1>
-      <h1 className="text-center mb-2 text-xs font-medium">With viewProfile, you can view a user's Farcaster profile within the frame.</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With viewProfile, you can view a user&apos;s Farcaster profile within the frame.</h1>
       <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
               <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
                 sdk.actions.viewProfile
