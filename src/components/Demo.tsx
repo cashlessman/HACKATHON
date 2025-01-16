@@ -5,7 +5,7 @@ import { Input } from "../components/ui/input"
 import { signIn, signOut, getCsrfToken } from "next-auth/react";
 import sdk, {
     AddFrame,
-  type Context,  // FrameNotificationDetails,
+  type Context, 
   SignIn as SignInCore,
 } from "@farcaster/frame-sdk";
 import {
@@ -38,13 +38,7 @@ export default function Demo(
   const [txHash, setTxHash] = useState<string | null>(null);
 
   const [added, setAdded] = useState(false);
-  // const [notificationDetails, setNotificationDetails] =
-  //   useState<FrameNotificationDetails | null>(null);
-
-  // const [lastEvent, setLastEvent] = useState("");
-
   const [addFrameResult, setAddFrameResult] = useState("");
-  // const [sendNotificationResult, setSendNotificationResult] = useState("");
 
   const cards = [
     <Frame1 key="frame1" />,
@@ -62,7 +56,7 @@ export default function Demo(
     <FrameD key="frame" />,
     <SignedIn key="signedIn" />,
     <OpenLinkD key="openLink" />,
-    <Pop/>,
+    <Pop key="popup" />,
     <CloseFrame key="closeFrame" />,
     <AddFrameClient key="addFrameClient" />,
     <Notification key="notification" />,
@@ -88,14 +82,6 @@ export default function Demo(
         document.removeEventListener('mousedown', handleMouseDown);
       };
     }, []);
-  
-  // useEffect(() => {
-  //   setNotificationDetails(context?.client.notificationDetails ?? null);
-  // }, [context]);
-
-  // useEffect(() => {
-  //   addFrame()
-  //   }, [context]);
 
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
@@ -139,50 +125,13 @@ export default function Demo(
       setContext(context);
       setAdded(context.client.added);
 
-      // sdk.on("frameAdded", ({ notificationDetails }) => {
-      //   setLastEvent(
-      //     `frameAdded${!!notificationDetails ? ", notifications enabled" : ""}`
-      //   );
-
-      //   setAdded(true);
-      //   if (notificationDetails) {
-      //     setNotificationDetails(notificationDetails);
-      //   }
-      // });
-
-      // sdk.on("frameAddRejected", ({ reason }) => {
-      //   setLastEvent(`frameAddRejected, reason ${reason}`);
-      // });
-
-      // sdk.on("frameRemoved", () => {
-      //   setLastEvent("frameRemoved");
-      //   setAdded(false);
-      //   setNotificationDetails(null);
-      // });
-
-      // sdk.on("notificationsEnabled", ({ notificationDetails }) => {
-      //   setLastEvent("notificationsEnabled");
-      //   setNotificationDetails(notificationDetails);
-      // });
-      // sdk.on("notificationsDisabled", () => {
-      //   setLastEvent("notificationsDisabled");
-      //   setNotificationDetails(null);
-      // });
-
-      // sdk.on("primaryButtonClicked", () => {
-      //   console.log("primaryButtonClicked");
-      // });
-
       console.log("Calling ready");
       sdk.actions.ready({});
 
-// Set up a MIPD Store, and request Providers.
 const store = createStore()
 
-// Subscribe to the MIPD Store.
 store.subscribe(providerDetails => {
   console.log("PROVIDER DETAILS", providerDetails)
-  // => [EIP6963ProviderDetail, EIP6963ProviderDetail, ...]
 })
 
     };
@@ -195,70 +144,6 @@ store.subscribe(providerDetails => {
       };
     }
   }, [isSDKLoaded]);
-
-
-  // const close = useCallback(() => {
-  //   sdk.actions.close();
-  // }, []);
-
-  const addFrame = useCallback(async () => {
-    try {
-      // setNotificationDetails(null);
-
-      // const result = await sdk.actions.addFrame();
-
-      // if (result.notificationDetails) {
-      //   setNotificationDetails(result.notificationDetails);
-      // }
-      // setAddFrameResult(
-      //   result.notificationDetails
-      //     ? `Added, got notificaton token ${result.notificationDetails.token} and url ${result.notificationDetails.url}`
-      //     : "Added, got no notification details"
-      // );
-    } catch (error) {
-      if (error instanceof AddFrame.RejectedByUser) {
-        setAddFrameResult(`Not added: ${error.message}`);
-      }
-      
-      if (error instanceof AddFrame.InvalidDomainManifest) {
-        setAddFrameResult(`Not added: ${error.message}`);
-      }
-
-      setAddFrameResult(`Error: ${error}`);
-    }
-  }, []);
-
-  // const sendNotification = useCallback(async () => {
-  //   setSendNotificationResult("");
-  //   if (!notificationDetails || !context) {
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await fetch("/api/send-notification", {
-  //       method: "POST",
-  //       mode: "same-origin",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         fid: context.user.fid,
-  //         notificationDetails,
-  //       }),
-  //     });
-
-  //     if (response.status === 200) {
-  //       setSendNotificationResult("Success");
-  //       return;
-  //     } else if (response.status === 429) {
-  //       setSendNotificationResult("Rate limited");
-  //       return;
-  //     }
-
-  //     const data = await response.text();
-  //     setSendNotificationResult(`Error: ${data}`);
-  //   } catch (error) {
-  //     setSendNotificationResult(`Error: ${error}`);
-  //   }
-  // }, [context, notificationDetails]);
 
   const sendTx = useCallback(() => {
     sendTransaction(
@@ -412,7 +297,7 @@ store.subscribe(providerDetails => {
             Add frame result: {addFrameResult}
           </div>
         )}
-        <Button onClick={addFrame} disabled={added}>
+        <Button onClick={()=> sdk.actions.addFrame()} disabled={added}>
           Add frame to client
         </Button>
       </div>
@@ -462,7 +347,6 @@ store.subscribe(providerDetails => {
     
       );
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
   function Scroll() {
     return (
       <div className="w-auto bg-slate-900">
