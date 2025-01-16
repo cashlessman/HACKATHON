@@ -50,7 +50,6 @@ export default function Demo(
     <AddFrameClient key="addFrameClient" />,
     <Notification key="notification" />,
     <Wallet key="wallet" />,
-    <LiveFrame key="frame"/>,
 
   ];
   const card = [
@@ -454,11 +453,15 @@ store.subscribe(providerDetails => {
   </button>
   <button
           className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
+          onClick={() => scrollToSection('liveFrame')}
+          >
+Live Frames  </button>
+  <button
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
           onClick={() => scrollToSection('github')}
           >
   Open Source Repositories
   </button>
-
     </div>
   </section>
   <section id="card">
@@ -506,7 +509,7 @@ store.subscribe(providerDetails => {
     </div>  </section>
   
       {/* Features Section */}
-      <section id="docs" className="container mx-auto grid md:grid-cols-3 gap-3 p-5 text-center h-screen">
+      <section id="docs" className="container mx-auto grid md:grid-cols-3 gap-3 p-5 text-center">
       {[
         {
           title: "Introduction",
@@ -552,11 +555,62 @@ store.subscribe(providerDetails => {
         </div>
       ))}
   </section>
-  <section id="github" className="flex flex-col w-full bg-slate-900 flex items-center justify-center text-white h-[calc(100vh-80px)]">
-    <div className="mb-4">
+  <section className="flex flex-col w-full bg-slate-900 flex items-center justify-center text-white h-[calc(100vh-80px)]">
+  <div id="liveFrame" className="mb-4"> 
+    <h1 className="text-center mb-5 font-bold text-2xl">Live Frames</h1>
+
+      <div className="grid grid-cols-2 gap-1 p-3">
+      <a
+          href="https://warpcast.com/~/frames/launch?domain=degen-v2.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 ml-2 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+        >
+          DEGEN
+        </a>
+        <a
+          href="https://warpcast.com/~/frames/launch?domain=around-joined.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 ml-2 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+        >
+          Joined Around
+        </a>
+        <a
+          href="https://warpcast.com/~/frames/launch?domain=yoink.party"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 ml-2 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+        >
+          Yonik!
+        </a>
+        <a
+          href="https://warpcast.com/~/frames/launch?domain=app.payflow.me"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 ml-2 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+        >
+Payflow        </a>
+<a
+          href="https://warpcast.com/~/frames/launch?domain=weeklyhackathon.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 ml-2 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+        >
+weekly $hackathon       </a>
+<a
+          href="https://warpcast.com/~/frames/launch?domain=framesgiving.anky.bot"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#8a63d2] text-white px-6 py-6 mt-3 ml-2 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+        >
+Anky       </a>
+</div>
+    </div>
+    <div  id="github" className="mb-4">
     <h1 className="text-center mb-5 font-bold text-2xl">Open Source Repositories</h1>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 p-1">
     <button
       className="flex-1 bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
       onClick={() => sdk.actions.openUrl('https://github.com/warpcast/scores-frame')}
@@ -567,7 +621,7 @@ store.subscribe(providerDetails => {
       className="flex-1 bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
       onClick={() => sdk.actions.openUrl('https://github.com/horsefacts/yoink-devcon')}
     >
-      Yoink
+      Yoink!
     </button>
     <button
       className="flex-1 bg-[#8a63d2] text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-all font-bold"
@@ -1255,34 +1309,7 @@ function LiveFrameD() {
   </div>
   );
 }
-function LiveFrame() {
-  return (
-    <div >
-      <h1 className="text-center text-2xl font-semibold">Live Frames</h1>
-      <h1 className="text-center mb-2 text-xs font-medium">Check out two Frames built by me</h1>
 
-    <div className="flex justify-center">
-    {/* <Button onClick={()=> sdk.actions.openUrl("https://warpcast.com/~/frames")}>View</Button> */}
-    <a
-          href="https://warpcast.com/~/frames/launch?domain=degen-v2.vercel.app"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
-        >
-          DEGEN
-        </a>
-        <a
-          href="https://warpcast.com/~/frames/launch?domain=around-joined.vercel.app"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 ml-2 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
-        >
-          Joined Around
-        </a>
-        </div>
-  </div>
-  );
-}
 function Frame1() {
   return (
     <div >
