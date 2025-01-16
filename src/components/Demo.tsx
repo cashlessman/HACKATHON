@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useCallback, useState, useMemo } from "react";
+import { useEffect, useCallback, useState, useMemo, useRef } from "react";
 import { Input } from "../components/ui/input"
 import { signIn, signOut, getCsrfToken } from "next-auth/react";
 import sdk, {
     AddFrame,
-    type Context,  // FrameNotificationDetails,
+  type Context,  // FrameNotificationDetails,
   SignIn as SignInCore,
 } from "@farcaster/frame-sdk";
 import {
@@ -57,8 +57,38 @@ export default function Demo(
     <Notification key="notification" />,
     <Wallet key="wallet" />
   ];
+  const card = [
+    <Frame1 key="frame1" />,
+    <FrameD key="frame" />,
+    <SignedIn key="signedIn" />,
+    <OpenLinkD key="openLink" />,
+    <Pop/>,
+    <CloseFrame key="closeFrame" />,
+    <AddFrameClient key="addFrameClient" />,
+    <Notification key="notification" />,
+    <Wallet key="wallet" />
+  ];
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const popupRef = useRef<HTMLDivElement>(null);
+    const togglePopup = () => {
+      setIsPopupVisible(!isPopupVisible);
+    };
+  
+    const handleClickOutside = (event: React.MouseEvent<Document, MouseEvent>) => {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        setIsPopupVisible(false);
+      }
+    };
 
+    useEffect(() => {
+      const handleMouseDown = (event: MouseEvent) => handleClickOutside(event as unknown as React.MouseEvent<Document, MouseEvent>);
+      document.addEventListener('mousedown', handleMouseDown);
+      return () => {
+        document.removeEventListener('mousedown', handleMouseDown);
+      };
+    }, []);
+  
   // useEffect(() => {
   //   setNotificationDetails(context?.client.notificationDetails ?? null);
   // }, [context]);
@@ -399,6 +429,39 @@ store.subscribe(providerDetails => {
   const reply =  encodeURIComponent(
     `Hey! Can you add me to the dev chat, please?`
     );
+    const closePopup = () => {
+      setIsPopupVisible(false);
+    };
+    function Pop() {
+      return (
+    <div className="relative">
+      <ViewProfileD/>
+      <Button
+            onClick={togglePopup}
+            >
+        View Profile
+      </Button>
+    
+          {isPopupVisible && (
+            <div
+              ref={popupRef}
+              className="absolute top-12 left-1/2 transform -translate-x-1/2 z-10 flex justify-center p-2 border-[#8a63d2] border-4 bg-white shadow-lg rounded-lg"
+            >
+                        <button
+            onClick={closePopup}
+            className="absolute top-2 right-2 text-black text-xl font-bold focus:outline-none"
+          >
+            ×
+          </button>
+              <Profile/>
+
+            </div>
+          )}
+        </div>
+    
+    
+      );
+    }
     /////////////////////////////////////////////////////////////////////////////////////////////////////
   function Scroll() {
     return (
@@ -407,7 +470,6 @@ store.subscribe(providerDetails => {
       {/* <header className="sticky top-0 bg-white shadow-lg"> */}
       <header className="bg-white shadow-lg">
       <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center">{title}</h1>
-
         <div className="container items-center p-3">
           <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center">Farcaster Frames v2</h1>
         </div>
@@ -449,7 +511,7 @@ store.subscribe(providerDetails => {
   </section>
   <section id="card">
   <div className="flex flex-col items-center justify-center h-screen bg-slate-900">
-      <div className="w-80 p-6 bg-blue-100 rounded-lg shadow-lg">
+      <div className="w-80 p-3 bg-blue-100 rounded-lg shadow-lg">
         {cards[currentIndex]}
       </div>
 
@@ -648,7 +710,7 @@ return (
     <section id="card">
       <div className="flex flex-col items-center justify-center h-screen bg-slate-900 text-black">
         <div className="w-80 p-6 bg-blue-100 rounded-lg shadow-lg">
-          {cards[currentIndex]}
+          {card[currentIndex]}
         </div>
 
         <div className="mt-6 flex space-x-4">
@@ -803,9 +865,11 @@ return (
     {/* Footer */}
     <footer className="bg-gray-800 text-white py-5">
       <div className="container mx-auto text-center">
-        <p>
-          Made with <span className="text-red-500">&hearts;</span> by <span className="text-blue-500" onClick={() => sdk.actions.viewProfile({ fid: 268438 })}>cashlessman.eth</span>.
-        </p>
+      <p>
+  Made with <span className="text-red-500">&hearts;</span> by <a href="https://warpcast.com/cashlessman.eth" className="text-blue-500">cashlessman.eth</a>.
+</p>
+
+
       </div>
     </footer>
   </div>
@@ -1044,6 +1108,40 @@ function ViewProfile() {
     </>
   );
 }
+const ViewProfileD = () => {
+  const [fid, setFid] = useState('268438');
+
+  return (
+    <>
+      <div>
+      <h1 className="text-center text-2xl font-semibold">viewProfile</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With viewProfile, you can view a user&apos;s Farcaster profile within the frame.</h1>
+      <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.actions.viewProfile
+              </pre>
+            </div>
+        <Label className="text-xs font-semibold text-gray-500 mb-1" htmlFor="view-profile-fid">Fid:</Label>
+        <Input
+          id="view-profile-fid"
+          type="number"
+          value={fid}
+          className="mb-2"
+          onChange={(e) => { 
+            setFid(e.target.value)
+          }}
+          step="1"
+          min="1"
+        />
+      </div>
+      {/* <Button
+            onClick={togglePopup}
+            >
+        View Profile
+      </Button> */}
+    </>
+  );
+}
 function Frame({ context }: { context: Context.FrameContext | undefined }) {
   return (
     <div>
@@ -1058,7 +1156,65 @@ function Frame({ context }: { context: Context.FrameContext | undefined }) {
     </div>
   );
 }
+const contextD = {
+  user: {
+    fid: 268438,
+    username: "cashlessman.eth",
+    displayName: "cashlessman 🎩",
+    pfpUrl: "https://imagedelivery.net/BXluQx4ige9GuW0Ia56BHw/a74b030e-2d92-405c-c2d0-1696f5d51d00/original",
+    location: {
+      placeId: "",
+      description: ""
+    }
+  },
+  client: {
+    clientFid: 9152,
+    added: false,
+    safeAreaInsets: {
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0
+    }
+  }
+};
+function FrameD() {
+  return (
+    <div>
+      <h1 className="text-center text-2xl font-semibold"> Context</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">with Context you will have access to the following</h1>
 
+    <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+      <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+        {JSON.stringify(contextD, null, 2)}
+      </pre>
+    </div>
+    </div>
+  );
+}
+
+function Profile() {
+  return (
+<div className="flex flex-col w-full h-full bg-[#FFF5EE] text-center font-sans rounded-lg w-96">
+    <div className="flex items-center m-auto mt-3">
+            <img
+              src="https://imagedelivery.net/BXluQx4ige9GuW0Ia56BHw/a74b030e-2d92-405c-c2d0-1696f5d51d00/original"
+              alt="Profile"
+              className="w-16 h-16 rounded-full mr-4"
+              />
+    </div>
+    <h2 className="text-lg font-bold mt-2">cashlessman.eth</h2>
+    <div className="flex flex-row font-medium justify-center">
+    <p className="text-gray-500">4K followers</p>
+
+    <p className="text-gray-500 ml-4">570 following</p>
+    </div>
+    <p className="text-gray-500 font-medium">dev - @infobot</p>
+    <p className="text-gray-500 font-medium mb-3">69 followes you know</p>
+
+    </div>
+  );
+}
 function SignedIn() {
   return (
     <div>
@@ -1084,6 +1240,29 @@ function OpenLink() {
       </pre>
     </div>
     <Button onClick={()=> sdk.actions.openUrl("https://warpcast.com/cashlessman.eth")}>Open Warpcast Profile</Button>
+  </div>
+  );
+}
+function OpenLinkD() {
+  return (
+    <div >
+      <h1 className="text-center text-2xl font-semibold">openUrl</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With openUrl, you can open a link outside of the frame.</h1>
+    <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+      <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+        sdk.actions.openUrl
+      </pre>
+    </div>
+    <div className="flex justify-center">
+    <a
+          href="https://warpcast.com/cashlessman.eth"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+        >
+          Open Warpcast Profile &#x2197;
+        </a>
+        </div>
   </div>
   );
 }
@@ -1129,6 +1308,7 @@ function Notification() {
 
   );
 }
+
 const scrollToSection = (id:string) => {
   const section = document.getElementById(id);
   if (section) {
