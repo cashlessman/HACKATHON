@@ -47,8 +47,18 @@ export default function Demo(
   const [addFrameResult, setAddFrameResult] = useState("");
   // const [sendNotificationResult, setSendNotificationResult] = useState("");
 
-  const cards = [Frame1(), Frame({context}), SignedIn(), OpenLink(),ViewProfile(), CloseFrame(), <AddFrameClient/>, Notification(),<Wallet/>];
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const cards = [
+    <Frame1 key="frame1" />,
+    <Frame key="frame" context={context} />,
+    <SignedIn key="signedIn" />,
+    <OpenLink key="openLink" />,
+    <ViewProfile key="viewProfile" />,
+    <CloseFrame key="closeFrame" />,
+    <AddFrameClient key="addFrameClient" />,
+    <Notification key="notification" />,
+    <Wallet key="wallet" />
+  ];
+    const [currentIndex, setCurrentIndex] = useState(0);
 
   // useEffect(() => {
   //   setNotificationDetails(context?.client.notificationDetails ?? null);
@@ -166,7 +176,7 @@ store.subscribe(providerDetails => {
     try {
       // setNotificationDetails(null);
 
-      const result = await sdk.actions.addFrame();
+      // const result = await sdk.actions.addFrame();
 
       // if (result.notificationDetails) {
       //   setNotificationDetails(result.notificationDetails);
@@ -1003,7 +1013,7 @@ function ViewProfile() {
     <>
       <div>
       <h1 className="text-center text-2xl font-semibold">viewProfile</h1>
-      <h1 className="text-center mb-2 text-xs font-medium">With `viewProfile`, you can view a user's Farcaster profile within the frame.</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With viewProfile, you can view a user&apos;s Farcaster profile within the frame.</h1>
       <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
               <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
                 sdk.actions.viewProfile
@@ -1049,7 +1059,7 @@ function SignedIn() {
   return (
     <div>
       <h1 className="text-center text-2xl font-semibold">Sign In with Farcaster</h1>
-      <h1 className="text-center mb-2 text-xs font-medium">With "Sign In with Farcaster," you can link your frame to the user's Farcaster account.</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With Sign In with Farcaster, you can link your frame to the user&apos;s Farcaster account.</h1>
     <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
       <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
         sdk.actions.signIn
