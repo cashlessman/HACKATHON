@@ -556,8 +556,8 @@ Live Frames  </button>
       ))}
   </section>
   <section className="flex flex-col w-full bg-slate-900 flex items-center justify-center text-white h-[calc(100vh-80px)]">
-  <div id="liveFrame" className="mb-4"> 
-    <h1 className="text-center mb-5 font-bold text-2xl">Live Frames</h1>
+  <div id="liveFrame" className="mb-1"> 
+    <h1 className="text-center mb-1 font-bold text-2xl">Live Frames</h1>
 
       <div className="grid grid-cols-2 gap-1 p-3">
       <a
@@ -608,7 +608,7 @@ Anky       </a>
 </div>
     </div>
     <div  id="github" className="mb-4">
-    <h1 className="text-center mb-5 font-bold text-2xl">Open Source Repositories</h1>
+    <h1 className="text-center mb-1 font-bold text-2xl">Open Source Repositories</h1>
 
       <div className="grid grid-cols-2 gap-3 p-1">
     <button
