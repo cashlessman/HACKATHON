@@ -7,10 +7,10 @@ const frame = {
   version: "next",
   imageUrl: `${appUrl}/opengraph-image`,
   button: {
-    title: "Launch Frame",
+    title: "Get Started",
     action: {
       type: "launch_frame",
-      name: "Launch",
+      name: "Frame V2 starter",
       url: appUrl,
       splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#f7f7f7",

@@ -9,7 +9,7 @@ export async function GET() {
     },
     frame: {
       version: "1",
-      name: "Frames v2 Demo",
+      name: "Frame V2 starter",
       iconUrl: `${appUrl}/icon.png`,
       homeUrl: appUrl,
       imageUrl: `${appUrl}/opengraph-image`,
