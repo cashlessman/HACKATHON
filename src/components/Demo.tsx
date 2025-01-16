@@ -145,6 +145,70 @@ store.subscribe(providerDetails => {
     }
   }, [isSDKLoaded]);
 
+
+  // const close = useCallback(() => {
+  //   sdk.actions.close();
+  // }, []);
+
+  const addFrame = useCallback(async () => {
+    try {
+      // setNotificationDetails(null);
+
+      const result = await sdk.actions.addFrame();
+
+      // if (result.notificationDetails) {
+      //   setNotificationDetails(result.notificationDetails);
+      // }
+      setAddFrameResult(
+        result.notificationDetails
+          ? `Added, got notificaton token ${result.notificationDetails.token} and url ${result.notificationDetails.url}`
+          : "Added, got no notification details"
+      );
+    } catch (error) {
+      if (error instanceof AddFrame.RejectedByUser) {
+        setAddFrameResult(`Not added: ${error.message}`);
+      }
+      
+      if (error instanceof AddFrame.InvalidDomainManifest) {
+        setAddFrameResult(`Not added: ${error.message}`);
+      }
+
+      setAddFrameResult(`Error: ${error}`);
+    }
+  }, []);
+
+  // const sendNotification = useCallback(async () => {
+  //   setSendNotificationResult("");
+  //   if (!notificationDetails || !context) {
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch("/api/send-notification", {
+  //       method: "POST",
+  //       mode: "same-origin",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         fid: context.user.fid,
+  //         notificationDetails,
+  //       }),
+  //     });
+
+  //     if (response.status === 200) {
+  //       setSendNotificationResult("Success");
+  //       return;
+  //     } else if (response.status === 429) {
+  //       setSendNotificationResult("Rate limited");
+  //       return;
+  //     }
+
+  //     const data = await response.text();
+  //     setSendNotificationResult(`Error: ${data}`);
+  //   } catch (error) {
+  //     setSendNotificationResult(`Error: ${error}`);
+  //   }
+  // }, [context, notificationDetails]);
+
   const sendTx = useCallback(() => {
     sendTransaction(
       {
@@ -297,7 +361,7 @@ store.subscribe(providerDetails => {
             Add frame result: {addFrameResult}
           </div>
         )}
-        <Button onClick={()=> sdk.actions.addFrame()} disabled={added}>
+        <Button onClick={addFrame} disabled={added}>
           Add frame to client
         </Button>
       </div>
@@ -347,6 +411,7 @@ store.subscribe(providerDetails => {
     
       );
     }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
   function Scroll() {
     return (
       <div className="w-auto bg-slate-900">
