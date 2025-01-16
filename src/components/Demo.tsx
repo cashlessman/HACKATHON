@@ -5,8 +5,7 @@ import { Input } from "../components/ui/input"
 import { signIn, signOut, getCsrfToken } from "next-auth/react";
 import sdk, {
     AddFrame,
-  Context,
-  // FrameNotificationDetails,
+    type Context,  // FrameNotificationDetails,
   SignIn as SignInCore,
 } from "@farcaster/frame-sdk";
 import {
@@ -647,7 +646,7 @@ return (
     </section>
 
     <section id="card">
-      <div className="flex flex-col items-center justify-center h-screen bg-slate-900">
+      <div className="flex flex-col items-center justify-center h-screen bg-slate-900 text-black">
         <div className="w-80 p-6 bg-blue-100 rounded-lg shadow-lg">
           {cards[currentIndex]}
         </div>
@@ -814,7 +813,12 @@ return (
 
   return (
 
-    <div><Scroll/>
+    <div style={{ 
+      paddingTop: context?.client.safeAreaInsets?.top ?? 0, 
+      paddingBottom: context?.client.safeAreaInsets?.bottom ?? 0,
+      paddingLeft: context?.client.safeAreaInsets?.left ?? 0,
+      paddingRight: context?.client.safeAreaInsets?.right ?? 0 ,
+    }}><Scroll/>
    
     </div>
 
