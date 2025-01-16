@@ -6,7 +6,7 @@ import { signIn, signOut, getCsrfToken } from "next-auth/react";
 import sdk, {
     AddFrame,
   Context,
-  FrameNotificationDetails,
+  // FrameNotificationDetails,
   SignIn as SignInCore,
 } from "@farcaster/frame-sdk";
 import {
@@ -36,30 +36,19 @@ export default function Demo(
 ) {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [context, setContext] = useState<Context.FrameContext>();
-  // const [isContextOpen, setIsContextOpen] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
 
   const [added, setAdded] = useState(false);
-  const [notificationDetails, setNotificationDetails] =
-    useState<FrameNotificationDetails | null>(null);
+  // const [notificationDetails, setNotificationDetails] =
+  //   useState<FrameNotificationDetails | null>(null);
 
-  const [lastEvent, setLastEvent] = useState("");
+  // const [lastEvent, setLastEvent] = useState("");
 
   const [addFrameResult, setAddFrameResult] = useState("");
   // const [sendNotificationResult, setSendNotificationResult] = useState("");
 
-  const cards = [
-    <Frame1 key="frame1" />,
-    <Frame key="frame" context={context} />,
-    <SignedIn key="signedIn" />,
-    <OpenLink key="openLink" />,
-    <ViewProfile key="viewProfile" />,
-    <CloseFrame key="closeFrame" />,
-    <AddFrameClient key="addFrameClient" />,
-    <Notification key="notification" />,
-    <Wallet key="wallet" />
-  ];
-    const [currentIndex, setCurrentIndex] = useState(0);
+  const cards = [Frame1(), Frame({context}), SignedIn(), OpenLink(),ViewProfile(), CloseFrame(), <AddFrameClient/>, Notification(),<Wallet/>];
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   // useEffect(() => {
   //   setNotificationDetails(context?.client.notificationDetails ?? null);
@@ -105,84 +94,88 @@ export default function Demo(
     switchChain({ chainId: chainId === base.id ? optimism.id : base.id });
   }, [switchChain, chainId]);
 
-  // useEffect(() => {
-  //   const load = async () => {
-  //     const context = await sdk.context;
-  //     setContext(context);
-  //     setAdded(context.client.added);
+  useEffect(() => {
+    const load = async () => {
+      const context = await sdk.context;
+      setContext(context);
+      setAdded(context.client.added);
 
-  //     sdk.on("frameAdded", ({ notificationDetails }) => {
-  //       setLastEvent(
-  //         `frameAdded${!!notificationDetails ? ", notifications enabled" : ""}`
-  //       );
+      // sdk.on("frameAdded", ({ notificationDetails }) => {
+      //   setLastEvent(
+      //     `frameAdded${!!notificationDetails ? ", notifications enabled" : ""}`
+      //   );
 
-  //       setAdded(true);
-  //       if (notificationDetails) {
-  //         setNotificationDetails(notificationDetails);
-  //       }
-  //     });
+      //   setAdded(true);
+      //   if (notificationDetails) {
+      //     setNotificationDetails(notificationDetails);
+      //   }
+      // });
 
-  //     sdk.on("frameAddRejected", ({ reason }) => {
-  //       setLastEvent(`frameAddRejected, reason ${reason}`);
-  //     });
+      // sdk.on("frameAddRejected", ({ reason }) => {
+      //   setLastEvent(`frameAddRejected, reason ${reason}`);
+      // });
 
-  //     sdk.on("frameRemoved", () => {
-  //       setLastEvent("frameRemoved");
-  //       setAdded(false);
-//         setNotificationDetails(null);
-//       });
+      // sdk.on("frameRemoved", () => {
+      //   setLastEvent("frameRemoved");
+      //   setAdded(false);
+      //   setNotificationDetails(null);
+      // });
 
-//       sdk.on("notificationsEnabled", ({ notificationDetails }) => {
-//         setLastEvent("notificationsEnabled");
-//         setNotificationDetails(notificationDetails);
-//       });
-//       sdk.on("notificationsDisabled", () => {
-//         setLastEvent("notificationsDisabled");
-//         setNotificationDetails(null);
-//       });
+      // sdk.on("notificationsEnabled", ({ notificationDetails }) => {
+      //   setLastEvent("notificationsEnabled");
+      //   setNotificationDetails(notificationDetails);
+      // });
+      // sdk.on("notificationsDisabled", () => {
+      //   setLastEvent("notificationsDisabled");
+      //   setNotificationDetails(null);
+      // });
 
-//       sdk.on("primaryButtonClicked", () => {
-//         console.log("primaryButtonClicked");
-//       });
+      // sdk.on("primaryButtonClicked", () => {
+      //   console.log("primaryButtonClicked");
+      // });
 
-//       console.log("Calling ready");
-//       sdk.actions.ready({});
+      console.log("Calling ready");
+      sdk.actions.ready({});
 
-// // Set up a MIPD Store, and request Providers.
-// const store = createStore()
+// Set up a MIPD Store, and request Providers.
+const store = createStore()
 
-// // Subscribe to the MIPD Store.
-// store.subscribe(providerDetails => {
-//   console.log("PROVIDER DETAILS", providerDetails)
-//   // => [EIP6963ProviderDetail, EIP6963ProviderDetail, ...]
-// })
+// Subscribe to the MIPD Store.
+store.subscribe(providerDetails => {
+  console.log("PROVIDER DETAILS", providerDetails)
+  // => [EIP6963ProviderDetail, EIP6963ProviderDetail, ...]
+})
 
-//     };
-//     if (sdk && !isSDKLoaded) {
-//       console.log("Calling load");
-//       setIsSDKLoaded(true);
-//       load();
-//       return () => {
-//         sdk.removeAllListeners();
-//       };
-//     }
-//   }, [isSDKLoaded]);
+    };
+    if (sdk && !isSDKLoaded) {
+      console.log("Calling load");
+      setIsSDKLoaded(true);
+      load();
+      return () => {
+        sdk.removeAllListeners();
+      };
+    }
+  }, [isSDKLoaded]);
 
+
+  // const close = useCallback(() => {
+  //   sdk.actions.close();
+  // }, []);
 
   const addFrame = useCallback(async () => {
     try {
-      setNotificationDetails(null);
+      // setNotificationDetails(null);
 
       const result = await sdk.actions.addFrame();
 
-      if (result.notificationDetails) {
-        setNotificationDetails(result.notificationDetails);
-      }
-      setAddFrameResult(
-        result.notificationDetails
-          ? `Added, got notificaton token ${result.notificationDetails.token} and url ${result.notificationDetails.url}`
-          : "Added, got no notification details"
-      );
+      // if (result.notificationDetails) {
+      //   setNotificationDetails(result.notificationDetails);
+      // }
+      // setAddFrameResult(
+      //   result.notificationDetails
+      //     ? `Added, got notificaton token ${result.notificationDetails.token} and url ${result.notificationDetails.url}`
+      //     : "Added, got no notification details"
+      // );
     } catch (error) {
       if (error instanceof AddFrame.RejectedByUser) {
         setAddFrameResult(`Not added: ${error.message}`);
@@ -260,9 +253,7 @@ export default function Demo(
     });
   }, [chainId, signTypedData]);
 
-  // const toggleContext = useCallback(() => {
-  //   setIsContextOpen((prev) => !prev);
-  // }, []);
+
 
   if (!isSDKLoaded) {
     return <div>Loading...</div>;
@@ -406,7 +397,7 @@ export default function Demo(
       {/* Header */}
       {/* <header className="sticky top-0 bg-white shadow-lg"> */}
       <header className="bg-white shadow-lg">
-      <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center hidden">{title} {lastEvent}</h1>
+      <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center">{title}</h1>
 
         <div className="container items-center p-3">
           <h1 className="text-3xl font-bold text-[#8a63d2] hover:scale-105 transition-transform text-center">Farcaster Frames v2</h1>
@@ -690,7 +681,7 @@ return (
     </section>
 
     {/* Features Section */}
-    <section id="docs" className="container m-auto flex flex-wrap justify-center gap-5 p-5 text-center h-screen">
+    <section id="docs" className="container mx-auto flex flex-wrap justify-center gap-5 p-5 text-center h-screen">
       {[
         {
           title: "Introduction",
@@ -1012,7 +1003,7 @@ function ViewProfile() {
     <>
       <div>
       <h1 className="text-center text-2xl font-semibold">viewProfile</h1>
-      <h1 className="text-center mb-2 text-xs font-medium">With viewProfile, you can view a user&apos;s Farcaster profile within the frame.</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With `viewProfile`, you can view a user's Farcaster profile within the frame.</h1>
       <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
               <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
                 sdk.actions.viewProfile
@@ -1058,7 +1049,7 @@ function SignedIn() {
   return (
     <div>
       <h1 className="text-center text-2xl font-semibold">Sign In with Farcaster</h1>
-      <h1 className="text-center mb-2 text-xs font-medium">With Sign In with Farcaster, you can link your frame to the user&ldquo;s Farcaster account.</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">With "Sign In with Farcaster," you can link your frame to the user's Farcaster account.</h1>
     <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
       <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
         sdk.actions.signIn
