@@ -49,7 +49,9 @@ export default function Demo(
     <CloseFrame key="closeFrame" />,
     <AddFrameClient key="addFrameClient" />,
     <Notification key="notification" />,
-    <Wallet key="wallet" />
+    <Wallet key="wallet" />,
+    <LiveFrame key="frame"/>,
+
   ];
   const card = [
     <Frame1 key="frame1" />,
@@ -60,7 +62,8 @@ export default function Demo(
     <CloseFrame key="closeFrame" />,
     <AddFrameClient key="addFrameClient" />,
     <Notification key="notification" />,
-    <Wallet key="wallet" />
+    <Wallet key="wallet" />,
+    <LiveFrameD key="frame"/>
   ];
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -394,7 +397,7 @@ store.subscribe(providerDetails => {
           {isPopupVisible && (
             <div
               ref={popupRef}
-              className="absolute top-12 left-1/2 transform -translate-x-1/2 z-10 flex justify-center p-2 border-[#8a63d2] border-4 bg-white shadow-lg rounded-lg"
+              className="mt-5 flex justify-center items-center p-2 border-[#8a63d2] border-4 bg-white shadow-lg rounded-lg w-full"
             >
                         <button
             onClick={closePopup}
@@ -529,7 +532,12 @@ store.subscribe(providerDetails => {
           title: "Developer Tools",
           url: "https://warpcast.com/~/developers/frames",
           description: "Test and validate your frames in a live environment with the Developer Playground."
-        }
+        },
+        {
+          title: "Build Your First Frame",
+          url: "https://github.com/cashlessman/HACKATHON?tab=readme-ov-file#frames-v2-setup",
+          description: "Go through this step by step guide to build your first frame"
+        },
       ].map((feature, index) => (
         <div
           key={index}
@@ -701,50 +709,67 @@ return (
     </section>
 
     {/* Features Section */}
-    <section id="docs" className="container mx-auto flex flex-wrap justify-center gap-5 p-5 text-center h-screen">
-      {[
-        {
-          title: "Introduction",
-          url: "https://docs.farcaster.xyz/developers/frames/v2/",
-          description: "Frames v2 is a full-screen interactive canvas based on HTML, CSS, and JavaScript."
-        },
-        {
-          title: "Getting Started",
-          url: "https://docs.farcaster.xyz/developers/frames/v2/getting-started",
-          description: "Build your first frame by setting up a Next.js app and integrating the Farcaster Frame SDK."
-        },
-        {
-          title: "Specification",
-          url: "https://docs.farcaster.xyz/developers/frames/v2/spec",
-          description: "Discover Frame URL specifications, client SDK API, and features like authentication and notifications."
-        },
-        {
-          title: "Resources",
-          url: "https://docs.farcaster.xyz/developers/frames/v2/resources",
-          description: "Explore example projects, videos, tools, and learning resources."
-        },
-        {
-          title: "Developer Tools",
-          url: "https://warpcast.com/~/developers/frames",
-          description: "Test and validate your frames in a live environment with the Developer Playground."
-        }
-      ].map((feature, index) => (
-        <div
-          key={index}
-          className="bg-blue-100 shadow-lg rounded-lg p-3 hover:scale-105 transition-transform flex items-center justify-center flex-col"
+    <section
+  id="docs"
+  className="container mx-auto flex items-center justify-center h-screen p-5 mx-auto text-center"
+>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    {[
+      {
+        title: "Introduction",
+        url: "https://docs.farcaster.xyz/developers/frames/v2/",
+        description:
+          "Frames v2 is a full-screen interactive canvas based on HTML, CSS, and JavaScript.",
+      },
+      {
+        title: "Getting Started",
+        url: "https://docs.farcaster.xyz/developers/frames/v2/getting-started",
+        description:
+          "Build your first frame by setting up a Next.js app and integrating the Farcaster Frame SDK.",
+      },
+      {
+        title: "Specification",
+        url: "https://docs.farcaster.xyz/developers/frames/v2/spec",
+        description:
+          "Discover Frame URL specifications, client SDK API, and features like authentication and notifications.",
+      },
+      {
+        title: "Resources",
+        url: "https://docs.farcaster.xyz/developers/frames/v2/resources",
+        description:
+          "Explore example projects, videos, tools, and learning resources.",
+      },
+      {
+        title: "Developer Tools",
+        url: "https://warpcast.com/~/developers/frames",
+        description:
+          "Test and validate your frames in a live environment with the Developer Playground.",
+      },
+      {
+        title: "Build Your First Frame",
+        url: "https://github.com/cashlessman/HACKATHON?tab=readme-ov-file#frames-v2-setup",
+        description:
+          "Go through this step-by-step guide to build your first frame.",
+      },
+    ].map((feature, index) => (
+      <div
+        key={index}
+        className="bg-blue-100 shadow-lg rounded-lg p-5 hover:scale-105 transition-transform flex flex-col items-center justify-center"
+      >
+        <a
+          href={feature.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-2xl font-bold text-purple-700 hover:underline cursor-pointer"
         >
-          <a
-            href={feature.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-2xl font-bold text-purple-700 group-hover:underline cursor-pointer"
-          >
-            {feature.title} &#x2197;
-          </a>
-          <p className="text-gray-600 mt-3">{feature.description}</p>
-        </div>
-      ))}
-    </section>
+          {feature.title} &#x2197;
+        </a>
+        <p className="text-gray-600 mt-3">{feature.description}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
 
     <section id="github" className="flex flex-col w-full bg-slate-900 flex items-center justify-center text-white h-[calc(100vh-80px)]">
       <div className="mb-4">
@@ -1083,11 +1108,7 @@ const ViewProfileD = () => {
           min="1"
         />
       </div>
-      {/* <Button
-            onClick={togglePopup}
-            >
-        View Profile
-      </Button> */}
+
     </>
   );
 }
@@ -1144,7 +1165,7 @@ function FrameD() {
 
 function Profile() {
   return (
-<div className="flex flex-col w-full h-full bg-[#FFF5EE] text-center font-sans rounded-lg w-96">
+<div className="flex flex-col w-full h-full bg-[#FFF5EE] text-center font-sans rounded-lg w-max">
     <div className="flex items-center m-auto mt-3">
             <img
               src="https://imagedelivery.net/BXluQx4ige9GuW0Ia56BHw/a74b030e-2d92-405c-c2d0-1696f5d51d00/original"
@@ -1159,7 +1180,7 @@ function Profile() {
     <p className="text-gray-500 ml-4">570 following</p>
     </div>
     <p className="text-gray-500 font-medium">dev - @infobot</p>
-    <p className="text-gray-500 font-medium mb-3">69 followes you know</p>
+    <p className="text-gray-500 font-medium mb-3">69 followers you know</p>
 
     </div>
   );
@@ -1215,6 +1236,53 @@ function OpenLinkD() {
   </div>
   );
 }
+function LiveFrameD() {
+  return (
+    <div >
+      <h1 className="text-center text-2xl font-semibold">Live Frames</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">Check out Live Frames on Warpcast</h1>
+
+    <div className="flex justify-center">
+    <a
+          href="https://warpcast.com/~/frames"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+        >
+          Open Warpcast &#x2197;
+        </a>
+        </div>
+  </div>
+  );
+}
+function LiveFrame() {
+  return (
+    <div >
+      <h1 className="text-center text-2xl font-semibold">Live Frames</h1>
+      <h1 className="text-center mb-2 text-xs font-medium">Check out two Frames built by me</h1>
+
+    <div className="flex justify-center">
+    {/* <Button onClick={()=> sdk.actions.openUrl("https://warpcast.com/~/frames")}>View</Button> */}
+    <a
+          href="https://warpcast.com/~/frames/launch?domain=degen-v2.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+        >
+          DEGEN
+        </a>
+        <a
+          href="https://warpcast.com/~/frames/launch?domain=around-joined.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#8a63d2] text-white px-6 py-3 mt-3 ml-2 rounded-lg hover:bg-purple-600 transition-all font-bold text-center"
+        >
+          Joined Around
+        </a>
+        </div>
+  </div>
+  );
+}
 function Frame1() {
   return (
     <div >
@@ -1242,7 +1310,7 @@ function CloseFrame() {
 function Notification() {
   return (
     <div className="container mx-auto text-center">
-      <h1 className="text-center text-2xl font-semibold">Notificationn</h1>
+      <h1 className="text-center text-2xl font-semibold">Notification</h1>
       <h1 className="text-center mb-2 text-xs font-medium">You can also send in app notifications from your frame</h1>
       <div className="rounded-lg">
         <img
