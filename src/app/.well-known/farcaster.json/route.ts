@@ -16,7 +16,8 @@ export async function GET() {
       buttonTitle: "Launch",
       splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#f7f7f7",
-      webhookUrl: `${appUrl}/api/webhook`,
+      webhookUrl: `
+https://webhooks.pingem.xyz/f/6ka8l`,
     },
   };
 
